@@ -1,1 +1,1 @@
-## Simple CLI application created to learn basics of Go
+## Simple CLI application created to learn the basics of Go
