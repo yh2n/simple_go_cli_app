@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt",
+	"fmt"
 	"strings"
 )
 
@@ -32,18 +32,40 @@ func main() {
 		fmt.Scan(&email)
 		fmt.Println("Enter number of tickets")
 		fmt.Scan(&userTickets)
+
+		isValidName :=len(firstName) >= 2 && len(lastName) >= 2
+		isValidEmail := strings.Contains(email, "@")
+		isValidTicketNmber := userTickets > 0 && userTickets <= remainingTickets
+
 		
-		remainingTickets -= userTickets
-		bookings = append(bookings, firstName + " " + lastName)
+		
+		if isValidName && isValidEmail && isValidTicketNmber {
+			remainingTickets -= userTickets
+			bookings = append(bookings, firstName + " " + lastName)
 
-		fmt.Printf("Thank you %v %v for booking %v tikets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
-		fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+			fmt.Printf("Thank you %v %v for booking %v tikets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
+			fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
 
-		firstNames := []string{}
-		for _, booking := range bookings {
-			var names = strings.Fields(booking)
-			firstNames = append(firstNames, names[0])
+			firstNames := []string{}
+			for _, booking := range bookings {
+				var names = strings.Fields(booking)
+				firstNames = append(firstNames, names[0])
+			}
+			fmt.Printf("These are all the bookings: %v\n", firstNames)
+			if remainingTickets == 0 {
+				fmt.Printf("Our conference is fully booked. Come back next year.\n")
+				break
+			}
+		} else {
+			if !isValidName {
+				fmt.Printf("The irst name or last name you entered is too short!\n")
+			}
+			if !isValidEmail{
+				fmt.Printf("The email address you provided is invalid!\n")
+			}
+			if !isValidTicketNmber {
+				fmt.Printf("The number of tickets you enterd can not be proces!\n")
+			}
 		}
-		fmt.Printf("These are all the bookings: %v\n", firstNames)
 	}
 }
