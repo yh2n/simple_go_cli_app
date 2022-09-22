@@ -1,6 +1,7 @@
 package main
 
 import (
+	"booking-app/helper"
 	"fmt"
 	"strings"
 )
@@ -19,7 +20,7 @@ func main() {
 
 	for {
 		firstName, lastName, email, userTickets:= getUserInput()
-		isValidName, isValidEmail, isValidTicketNmber:= validateUserInput(firstName, lastName, email, userTickets)
+		isValidName, isValidEmail, isValidTicketNmber:= helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
 		
 		if isValidName && isValidEmail && isValidTicketNmber {
 			bookTickets( userTickets, firstName, lastName, email)
@@ -61,12 +62,7 @@ func getFirstNames()[]string {
 			return firstNames
 }
 
-func validateUserInput(firstName string, lastName string, email string, userTickets uint)(bool, bool, bool) {
-	isValidName :=len(firstName) >= 2 && len(lastName) >= 2
-		isValidEmail := strings.Contains(email, "@")
-		isValidTicketNmber := userTickets > 0 && userTickets <= remainingTickets
-		return isValidName, isValidEmail, isValidTicketNmber
-}
+
 
 func getUserInput()(string, string, string, uint) {
 	var firstName string

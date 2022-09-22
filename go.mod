@@ -1,3 +1,3 @@
-module go_practice
+module booking-app
 
 go 1.19
