@@ -3,6 +3,8 @@ package main
 import (
 	"booking-app/helper"
 	"fmt"
+	"sync"
+	"time"
 )
 
 // package level variables
@@ -22,18 +24,21 @@ type UserData struct {
 	numberOfTickets uint
 }
 
+// to prevent main thread from exiting program before sendingTicket" is done executing
+var wg = sync.WaitGroup{}
+
 func main() {
-
 	greetUsers()
-
 	// fmt.Printf("conferencTickets is %T, remainingTickets is %T and conferenceName is %T\n", conferenceTickets, remainingTickets, conferenceName)
-
 	for {
 		firstName, lastName, email, userTickets := getUserInput()
 		isValidName, isValidEmail, isValidTicketNmber := helper.ValidateUserInput(firstName, lastName, email, userTickets, remainingTickets)
 
 		if isValidName && isValidEmail && isValidTicketNmber {
 			bookTickets(userTickets, firstName, lastName, email)
+			// "go" creates a "Goroutine" and makes code concurrent by having "sendTicket" execute in separate thread
+			wg.Add(1)
+			go sendTicket(userTickets, firstName, lastName, email)
 
 			firstNames := getFirstNames()
 			fmt.Printf("These are all the bookings: %v\n", firstNames)
@@ -54,6 +59,7 @@ func main() {
 			}
 		}
 	}
+	wg.Wait()
 }
 
 func greetUsers() {
@@ -99,8 +105,18 @@ func bookTickets(userTickets uint, firstName string, lastName string, email stri
 	}
 
 	bookings = append(bookings, userData)
-	fmt.Printf("List o booking is %v\n", bookings)
+	fmt.Printf("List of booking is %v\n", bookings)
 
 	fmt.Printf("Thank you %v %v for booking %v tikets. You will receive a confirmation email at %v\n", firstName, lastName, userTickets, email)
 	fmt.Printf("%v tickets remaining for %v\n", remainingTickets, conferenceName)
+}
+
+func sendTicket(userTickets uint, firstName string, lastName string, email string) {
+	// simulating delay in execution
+	time.Sleep(5 * time.Second)
+	var ticket = fmt.Sprintf("%v tickets for %v %v", userTickets, firstName, lastName)
+	fmt.Printf("Sending ticket(s):\n %v to email address %v\n", ticket, email)
+	fmt.Printf("############\n")
+	// removes thread from waiting list
+	wg.Done()
 }
